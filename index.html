@@ -30,13 +30,13 @@
     document.body.appendChild(app.view);
 
     // add a circles
-    addBlobs(100, app.stage)
+    addBlobs(200, app.stage)
 
     var l = blobs.length
-    console.log(blobs.length)
+   /* console.log(blobs.length) */
     for (var i = 0; i < l; i++) {
       b = blobs[i]
-      console.log(i, b.neighbours(100, blobs).length)
+      /* console.log(i, b.neighbours(100, blobs).length) */
       b.draw()
     }
 
@@ -45,7 +45,7 @@
       var l = blobs.length
       for (var i = 0; i < l; i++) {
         b = blobs[i]
-        b.update(100, blobs)
+        b.update(blobs)
       }
     });
 
