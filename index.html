@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Hello World</title>
+</head>
+<script src="pixi/pixi.min.js"></script>
+<script src="scripts/blob.js"></script>
+
+<body>
+  <script type="text/javascript">
+    let type = "WebGL"
+    if (!PIXI.utils.isWebGLSupported()) {
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type)
+
+    //Create a Pixi Application
+    // let app = new PIXI.Application({width: 256, height: 256}); 
+    let app = new PIXI.Application({
+      width: 800, // default: 800
+      height: 600, // default: 600
+      antialias: true, // default: false
+      transparent: false, // default: false
+      resolution: 1 // default: 1
+    });
+    //Add the canvas that Pixi automatically created for you to the HTML document
+    document.body.appendChild(app.view);
+
+    // add a circles
+    addBlobs(100, app.stage)
+
+    var l = blobs.length
+    console.log(blobs.length)
+    for (var i = 0; i < l; i++) {
+      b = blobs[i]
+      console.log(i, b.neighbours(100, blobs).length)
+      b.draw()
+    }
+
+    // main loop
+    app.ticker.add(function(delta) {
+      var l = blobs.length
+      for (var i = 0; i < l; i++) {
+        b = blobs[i]
+        b.update(100, blobs)
+      }
+    });
+
+  </script>
+</body>
+
+</html>
