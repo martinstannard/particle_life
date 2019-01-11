@@ -22,7 +22,7 @@ class Rules {
     for(var i = 0; i < this.species; i++) {
       this.rules[i] = new Array(this.species)
       for(var j = 0; j < this.species; j++) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.3) {
           this.rules[i][j] = {
             min: Math.random() * 50 + 10,
             max: Math.random() * 100,
