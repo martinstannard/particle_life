@@ -33,7 +33,7 @@ class Rules {
           this.rules[i][j] = {
             min: Math.random() * 50 + 10,
             max: Math.random() * 100,
-            repulsion: 0,
+            repulsion: Math.random() * 10,
             attraction: 0,
           }
         }
