@@ -8,6 +8,7 @@
 <script src="pixi/pixi.min.js"></script>
 <script src="scripts/rules.js"></script>
 <script src="scripts/blob.js"></script>
+<script src="scripts/controls.js"></script>
 
 <body>
   <script type="text/javascript">
@@ -17,16 +18,10 @@
     }
 
     PIXI.utils.sayHello(type)
-
+    let cx = 1024
+    let cy = 1024
     //Create a Pixi Application
-    // let app = new PIXI.Application({width: 256, height: 256}); 
-    let app = new PIXI.Application({
-      width: 800, // default: 800
-      height: 600, // default: 600
-      antialias: true, // default: false
-      transparent: false, // default: false
-      resolution: 1 // default: 1
-    });
+    let app = new PIXI.Application({ width: cx, height: cy, antialias: true });
     //Add the canvas that Pixi automatically created for you to the HTML document
     document.body.appendChild(app.view);
 
@@ -34,7 +29,8 @@
     var species = 6
     // add a circles
     var rules = new Rules(species)
-    addBlobs(pop, app.stage, rules)
+    addBlobs(pop, species, app.stage, rules)
+   /* instructions(app.stage) */
 
 
     var l = blobs.length

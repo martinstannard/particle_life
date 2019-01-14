@@ -2,23 +2,51 @@ var blobs = new Array()
 var colours = [0xFF3300, 0x33FF00, 0x0033FF, 0xFF00FF, 0x00FFFF, 0xFFFF00]
 
 class Blob extends PIXI.Graphics {
-  constructor(stage, rules) {
+  constructor(species, stage, rules) {
     super(stage)
 
     this.interactive = true
     this.on('pointerdown', onClick)
-    this.species = getRandomInt(6)
+    this.species = getRandomInt(species)
     this.rules = rules.rules[this.species]
 
-    this.x = Math.random() * 800
-    this.y = Math.random() * 600
+    this.x = Math.random() * 1024
+    this.y = Math.random() * 1024
+    this.vx = 0.0
+    this.vy = 0.0
     this.max = 100
-    // this.min = this.rules.min
-    // this.max = this.rules.max
-    // this.repulsion = this.rules.repulsion
-    // this.attraction = this.rules.attraction
+    this.maxX = stage.width
+    this.maxY = stage.height
     this.draw()
     stage.addChild(this)
+  }
+
+  update(blobs) {
+    var neighbours = this.neighbours(this.max, blobs)
+    var l = neighbours.length
+    for (var i = 0; i < l; i++) {
+      b = neighbours[i]
+      this.neighbourForce(b)
+    }
+    this.animate()
+    // if (neighbours.length > 0) {
+    //   this.draw()
+    // }
+  }
+
+  animate() {
+    if(this.vx > 1.0) { this.vx = 1.0 }
+    if(this.vy > 1.0) { this.vy = 1.0 }
+    if(this.vx < -1.0) { this.vx = -1.0 }
+    if(this.vy < -1.0) { this.vy = -1.0 }
+    this.x = this.x + this.vx
+    this.y = this.y + this.vy
+    if(this.x > this.maxX - 5.0) { this.x = this.maxX - 5.0 }
+    if(this.x < 5.0) { this.x = 5.0 }
+    if(this.y > this.maxY - 5.0) { this.y = this.maxY - 5.0}
+    if(this.y < 5.0) { this.y = 5.0 }
+    this.vy = this.vy * 0.9
+    this.vx = this.vx * 0.9
   }
 
   draw() {
@@ -29,17 +57,34 @@ class Blob extends PIXI.Graphics {
     this.endFill()
   }
 
-  update(blobs) {
-    var neighbours = this.neighbours(this.max, blobs)
-    var l = neighbours.length
-    for (var i = 0; i < l; i++) {
-      b = neighbours[i]
-      this.neighbourForce(b)
-    }
-    if (neighbours.length > 0) {
-      this.draw()
+  neighbourForce(blob) {
+    this.repulse(blob)
+    this.attract(blob)
+  }
+
+  repulse(blob) {
+    var repulsion = this.rules[blob.species].repulsion
+    var angle = heading(this, blob)
+    var dist = distance(this, blob)
+    if (dist < this.rules[blob.species].min) {
+      // this.x = this.x + (Math.cos(angle) * 1 * repulsion)
+      // this.y = this.y + (Math.sin(angle) * 1 * repulsion)
+      this.vx = this.vx + (Math.cos(angle) * repulsion)
+      this.vy = this.vy + (Math.sin(angle) * repulsion)
     }
   }
+
+  attract(blob){
+    var attraction = this.rules[blob.species].attraction
+    var angle = heading(this, blob)
+    var dist = distance(this, blob)
+    if (dist > this.rules[blob.species].min) {
+      // this.x = this.x - (Math.cos(angle) * 1 * attraction)
+      // this.y = this.y - (Math.sin(angle) * 1 * attraction)
+      this.vx = this.vx - (Math.cos(angle) * attraction)
+      this.vy = this.vy - (Math.sin(angle) *attraction)
+    }
+   }
 
   neighbours(dist, blobs) {
     var n = new Array()
@@ -58,41 +103,19 @@ class Blob extends PIXI.Graphics {
     this.y = this.y + (Math.random() - 0.5) * 2.0
   }
 
-  neighbourForce(blob) {
-    this.repulse(blob)
-    this.attract(blob)
-  }
-
-  repulse(blob) {
-    var repulsion = this.rules[blob.species].repulsion
-    var angle = heading(this, blob)
-    var dist = distance(this, blob)
-    if (dist < this.rules[blob.species].min) {
-      this.x = this.x + (Math.cos(angle) * 0.1 * repulsion)
-      this.y = this.y + (Math.sin(angle) * 0.1 * repulsion)
-    }
-  }
-
-  attract(blob){
-    var attraction = this.rules[blob.species].attraction
-    var angle = heading(this, blob)
-    var dist = distance(this, blob)
-    if (dist > this.rules[blob.species].min) {
-      this.x = this.x - (Math.cos(angle) * 0.1 * attraction)
-      this.y = this.y - (Math.sin(angle) * 0.1 * attraction)
-    }
-   }
 }
 
 function onClick() {
   console.log(this.species)
   console.log(this.rules)
+  console.log(this.vx)
+  console.log(this.vy)
   console.log(this.neighbours(this.max, blobs).length)
 }
 
-function addBlobs(count, stage, rules) {
-  for (var i = 0; i < count; i++) {
-    b = new Blob(stage, rules)
+function addBlobs(pop, species, stage, rules) {
+  for (var i = 0; i < pop; i++) {
+    b = new Blob(species, stage, rules)
     blobs.push(b)
   }
 }
@@ -115,21 +138,6 @@ function heading(a, b) {
 
 function calcAngle(x, y) {
   return Math.atan2(y, x)
-}
-
-function repelForce(blob_distance, repel_distance) {
-  return (repel_distance - blob_distance) / repel_distance
-}
-
-function attractForce(blob, min, max) {
-  var mid = ((max - min) / 2.0) + min
-  if (blob < mid) {
-    return (mid - blob) / mid
-  } else {
-    
-  }
-
-  return (_distance - blob_distance) / repel_distance
 }
 
 function getRandomInt(max) {
