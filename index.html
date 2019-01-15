@@ -6,47 +6,64 @@
   <title>Hello World</title>
 </head>
 <script src="pixi/pixi.min.js"></script>
+<script src="scripts/dat.gui.min.js"></script>
 <script src="scripts/rules.js"></script>
 <script src="scripts/blob.js"></script>
-<script src="scripts/controls.js"></script>
 
 <body>
   <script type="text/javascript">
+
+    var params = {
+      population: 200,
+      species: 5,
+      decay: 0.9,
+      radius: 100,
+      boundary: 30,
+      restart: function() {
+        console.log(params)
+        init()
+      }
+    }
+
+    let gui = null
+
+    window.onload = function() {
+      gui = new dat.GUI();
+      gui.add(params, 'population', 50, 500).step(5)
+      gui.add(params, 'species', 2, 10).step(1)
+      gui.add(params, 'decay', 0.0, 1.0)
+      gui.add(params, 'radius', 20, 200).step(1)
+      gui.add(params, 'boundary', 5, 100).step(1)
+      gui.add(params, 'restart')
+    };
+
     let type = "WebGL"
     if (!PIXI.utils.isWebGLSupported()) {
       type = "canvas"
     }
 
-    PIXI.utils.sayHello(type)
     let cx = 1024
     let cy = 1024
     //Create a Pixi Application
     let app = new PIXI.Application({ width: cx, height: cy, antialias: true });
-    //Add the canvas that Pixi automatically created for you to the HTML document
     document.body.appendChild(app.view);
+    console.log(app.view)
 
-    var pop = 400
-    var species = 6
-    // add a circles
-    var rules = new Rules(species)
-    addBlobs(pop, species, app.stage, rules)
-   /* instructions(app.stage) */
-
-
-    var l = blobs.length
-    for (var i = 0; i < l; i++) {
-      b = blobs[i]
-      b.draw()
-    }
+    init()
 
     // main loop
     app.ticker.add(function(delta) {
-      var l = blobs.length
-      for (var i = 0; i < l; i++) {
-        b = blobs[i]
-        b.update(blobs)
+      for (var i = 0; i < blobs.length; i++) {
+        blobs[i].update(blobs)
       }
     });
+
+    function init() {
+      app.stage.removeChildren()
+      blobs = new Array()
+      rules = new Rules(params.species, params.boundary, params.radius)
+      addBlobs(params, app, rules)
+    }
 
   </script>
 </body>
