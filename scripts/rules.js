@@ -17,26 +17,36 @@ class Rules {
         this.rules[i][j] = this.repeller()
       }
     }
-    // add a few chasers
-    for (var k = 0; k < 13; k++) {
-      this.chaser()
+    for (var k = 0; k < this.species; k++) {
+      this.cluster(k)
+    }
+    for (var k = 0; k < this.species; k++) {
+      this.chaser(k)
     }
   }
 
-  chaser() {
-    var a = getRandomInt(this.rules.length)
-    var b = getRandomInt(this.rules.length)
-    this.rules[a][b] = {
+  cluster(species) {
+    this.rules[species][species] = {
       min: this.min,
       max: this.max,
-      repulsion: 0.1,
+      repulsion: 0.4,
       attraction: 0.2,
     }
-    this.rules[b][a] = {
-      min: 20,
-      max: 50,
+  }
+  chaser(pursuer) {
+    var a = getRandomInt(this.rules.length)
+    var b = getRandomInt(this.rules.length)
+    this.rules[pursuer][b] = {
+      min: this.min,
+      max: this.max,
+      repulsion: 0.0,
+      attraction: 0.3,
+    }
+    this.rules[b][pursuer] = {
+      min: this.min,
+      max: this.max,
       repulsion: 0.3,
-      attraction: 0,
+      attraction: 0.0,
     }
   }
 
@@ -44,15 +54,13 @@ class Rules {
     return {
       min: this.min,
       max: this.max,
-      repulsion: Math.random() * 0.3,
+      repulsion: 0.3,
       attraction: 0.0,
     }
   }
 
   attractor() {
     return {
-      // min: Math.random() * 20 + 10,
-      // max: Math.random() * 100,
       min: this.min,
       max: this.max,
       repulsion: Math.random() * 0.3,
