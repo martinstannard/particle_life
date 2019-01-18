@@ -46,8 +46,13 @@
     let cy = 1024
     //Create a Pixi Application
     let app = new PIXI.Application({ width: cx, height: cy, antialias: true });
+    var renderer = app.renderer;
+
+    renderer.view.style.position = 'absolute';
+    renderer.view.style.left = '50%';
+    renderer.view.style.top = '50%';
+    renderer.view.style.transform = 'translate3d( -50%, -50%, 0 )';
     document.body.appendChild(app.view);
-    console.log(app.view)
 
     init()
 
