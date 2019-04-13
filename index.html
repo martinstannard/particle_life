@@ -29,8 +29,8 @@
 
     window.onload = function() {
       gui = new dat.GUI();
-      gui.add(params, 'population', 50, 1000).step(10)
-      gui.add(params, 'species', 2, 10).step(1)
+      gui.add(params, 'population', 50, 5000).step(10)
+      gui.add(params, 'species', 2, 20).step(1)
       gui.add(params, 'decay', 0.0, 1.0)
       gui.add(params, 'radius', 20, 200).step(1)
       gui.add(params, 'boundary', 5, 100).step(1)
