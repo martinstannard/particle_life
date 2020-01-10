@@ -45,6 +45,7 @@
     let cx = 1024
     let cy = 1024
     //Create a Pixi Application
+    PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES , 16);
     let app = new PIXI.Application({ width: cx, height: cy, antialias: true });
     var renderer = app.renderer;
 
